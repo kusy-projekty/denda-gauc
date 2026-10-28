@@ -15,10 +15,31 @@ with sync_playwright() as p:
     sh('00-titulka')
     pg.click('#play',force=True);pg.wait_for_function("G.scene==='gauc'");pg.wait_for_timeout(1500);sh('01-gauc-start')
     # sníst 5 burgerů
+    def eat(n,first=None):
+        for i in range(n):
+            pg.wait_for_function("G.cur.cour&&G.cur.cour.st==='wait'",timeout=25000)
+            if i==0 and first: sh(first)
+            pg.click('#bEat',force=True);pg.wait_for_timeout(900)
+    eat(2,'02-kuryr-prisel')
+    # --- Kusáč: zvonek, plazení, basáky, diskotéka ---
+    pg.wait_for_function("G.cur.state==='bell'",timeout=15000);pg.wait_for_timeout(500);sh('kusac-01-zvonek')
     for i in range(5):
-        pg.wait_for_function("G.cur.cour&&G.cur.cour.st==='wait'",timeout=20000)
-        if i==0: sh('02-kuryr-prisel')
-        pg.click('#bEat',force=True);pg.wait_for_timeout(900)
+        if mob: pg.tap('#bCrawl',force=True)
+        else: pg.keyboard.press('Space')
+        pg.wait_for_timeout(350)
+    pg.wait_for_timeout(600);sh('kusac-02-plazeni')
+    for i in range(4):
+        if mob: pg.tap('#bCrawl',force=True)
+        else: pg.keyboard.press('Space')
+        pg.wait_for_timeout(350)
+    pg.wait_for_function("G.cur.state==='visit'",timeout=8000);pg.wait_for_timeout(1500);sh('kusac-03-dvere-basaky')
+    pg.wait_for_function("G.cur.ph2==='disco'",timeout=25000);pg.wait_for_timeout(1200);sh('kusac-04-diskoteka')
+    if mob: pg.tap('#bBass',force=True)
+    else: pg.keyboard.press('KeyB')
+    pg.wait_for_timeout(2600);sh('kusac-05-diskoteka-tanec')
+    pg.wait_for_function("G.cur.state==='sit'&&G.cur.visited",timeout=30000);pg.wait_for_timeout(800);sh('kusac-06-po-navsteve')
+    print('po kusacovi',pg.evaluate("JSON.stringify(G.ST)"))
+    eat(3)
     pg.keyboard.press('KeyT');pg.wait_for_timeout(500)
     sh('03-gauc-tlusty')
     st=pg.evaluate("JSON.stringify(G.ST)");print('po jidle',st)

@@ -12,6 +12,10 @@ canvas{display:block}
 #watch b{font-size:17px;color:#7CFC8a}#watch b.hot{color:#ff4d5e}
 #toast{position:fixed;top:112px;right:8px;max-width:min(330px,82vw);background:#152515;border-left:5px solid #7CFC8a;padding:8px 10px;border-radius:10px;font-size:14px;opacity:0;transform:translateX(40px);transition:.3s;z-index:6;pointer-events:none}
 #toast.on{opacity:1;transform:none}
+#pbub{position:fixed;left:50%;top:40%;transform:translate(-50%,-100%);background:#fff;color:#111;border:3px solid #111;border-radius:18px;padding:6px 12px;font-weight:900;font-size:clamp(13px,3.4vw,16px);max-width:min(62vw,300px);width:max-content;text-align:center;z-index:5;display:none;pointer-events:none;box-shadow:0 4px 0 #0006;margin-top:-14px}
+#pbub small{font-size:.72em;color:#555;font-weight:700}
+#pbub:after{content:'';position:absolute;left:50%;bottom:-16px;margin-left:-12px;border:12px solid transparent;border-top:14px solid #111;border-bottom:0}
+#pbub.big{font-size:clamp(17px,5vw,26px);max-width:min(84vw,460px);padding:10px 16px;border-width:4px}
 #say{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#fff;color:#111;padding:10px 14px;border-radius:16px;font-size:16px;width:max-content;max-width:min(560px,92vw);text-align:center;box-shadow:0 4px 0 #0006;display:none;z-index:6;font-weight:600}
 #say b{color:#c0392b}
 #btns{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:0 10px;z-index:7}
@@ -42,5 +46,5 @@ canvas{display:block}
 </style></head><body>
 <div id="scn"></div><div id="bar"><i></i></div>
 <div id="watch"><div class="h">⌚ DENDA WATCH</div>❤️ <b id="wTep">68</b> BPM<br>👣 <b id="wKr">25</b> kroků<br>⚖️ <b id="wKg">118</b> kg</div>
-<div id="toast"></div><div id="say"></div><div id="btns"></div><div id="joy"><i></i></div><div id="burst"><div></div></div><div id="fade"></div>
+<div id="toast"></div><div id="say"></div><div id="pbub"></div><div id="btns"></div><div id="joy"><i></i></div><div id="burst"><div></div></div><div id="fade"></div>
 <div id="ov"></div>

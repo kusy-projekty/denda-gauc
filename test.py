@@ -43,11 +43,14 @@ with sync_playwright() as p:
     if mob: pg.tap('#bBass',force=True)
     else: pg.keyboard.press('KeyB')
     pg.wait_for_timeout(2600);sh('kusac-05-diskoteka-tanec')
-    pg.wait_for_function("G.cur.state==='sit'&&G.cur.visited",timeout=30000);pg.wait_for_timeout(800);sh('kusac-06-po-navsteve')
+    try: pg.wait_for_function("G.cur.state==='sit'&&G.cur.visited",timeout=30000)
+    except Exception as e:
+        print('STALL',pg.evaluate("JSON.stringify({st:G.cur.state,ph2:G.cur.ph2,vt:G.cur.vt,kp:G.cur.kp,K:G.cur.K&&G.cur.K.g.position,back:G.cur.back,scene:G.scene})"));raise;pg.wait_for_timeout(800);sh('kusac-06-po-navsteve')
     print('po kusacovi',pg.evaluate("JSON.stringify(G.ST)"))
     # --- parta pod okny: 2x zařvat ---
     for k in range(2):
-        pg.wait_for_function("G.cur.party.on&&G.cur.state==='sit'&&!document.querySelector('#bOkno').classList.contains('off')",timeout=40000);pg.wait_for_timeout(2500)
+        pg.wait_for_function("G.cur.party.on&&G.cur.state==='sit'&&!document.querySelector('#bOkno').classList.contains('off')",timeout=40000)
+        pg.wait_for_function("G.cur.viewT>2.6",timeout=25000);pg.wait_for_timeout(1800)
         if k==0: sh('okno-01-parta')
         if mob: pg.tap('#bOkno',force=True)
         else: pg.keyboard.press('KeyO')
@@ -55,6 +58,7 @@ with sync_playwright() as p:
         if k==0: sh('okno-02-zarval')
         pg.wait_for_timeout(2000)
         if k==0: sh('okno-03-ticho')
+        if k==0: pg.wait_for_function("G.cur.viewT<=0",timeout=8000);pg.wait_for_timeout(600);sh('okno-04-zpet-v-obyvaku')
     print('po okne',pg.evaluate("JSON.stringify(G.ST)"))
     eat(3)
     pg.keyboard.press('KeyT');pg.wait_for_timeout(500)

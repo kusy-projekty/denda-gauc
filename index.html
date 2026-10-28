@@ -12,6 +12,10 @@ canvas{display:block}
 #watch b{font-size:17px;color:#7CFC8a}#watch b.hot{color:#ff4d5e}
 #toast{position:fixed;top:112px;right:8px;max-width:min(330px,82vw);background:#152515;border-left:5px solid #7CFC8a;padding:8px 10px;border-radius:10px;font-size:14px;opacity:0;transform:translateX(40px);transition:.3s;z-index:6;pointer-events:none}
 #toast.on{opacity:1;transform:none}
+#pbub{position:fixed;left:50%;top:40%;transform:translate(-50%,-100%);background:#fff;color:#111;border:3px solid #111;border-radius:18px;padding:6px 12px;font-weight:900;font-size:clamp(13px,3.4vw,16px);max-width:min(62vw,300px);width:max-content;text-align:center;z-index:5;display:none;pointer-events:none;box-shadow:0 4px 0 #0006;margin-top:-14px}
+#pbub small{font-size:.72em;color:#555;font-weight:700}
+#pbub:after{content:'';position:absolute;left:50%;bottom:-16px;margin-left:-12px;border:12px solid transparent;border-top:14px solid #111;border-bottom:0}
+#pbub.big{font-size:clamp(17px,5vw,26px);max-width:min(84vw,460px);padding:10px 16px;border-width:4px}
 #say{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#fff;color:#111;padding:10px 14px;border-radius:16px;font-size:16px;width:max-content;max-width:min(560px,92vw);text-align:center;box-shadow:0 4px 0 #0006;display:none;z-index:6;font-weight:600}
 #say b{color:#c0392b}
 #btns{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:8px;flex-wrap:wrap;padding:0 10px;z-index:7}
@@ -42,7 +46,7 @@ canvas{display:block}
 </style></head><body>
 <div id="scn"></div><div id="bar"><i></i></div>
 <div id="watch"><div class="h">⌚ DENDA WATCH</div>❤️ <b id="wTep">68</b> BPM<br>👣 <b id="wKr">25</b> kroků<br>⚖️ <b id="wKg">118</b> kg</div>
-<div id="toast"></div><div id="say"></div><div id="btns"></div><div id="joy"><i></i></div><div id="burst"><div></div></div><div id="fade"></div>
+<div id="toast"></div><div id="say"></div><div id="pbub"></div><div id="btns"></div><div id="joy"><i></i></div><div id="burst"><div></div></div><div id="fade"></div>
 <div id="ov"></div>
 <script>/* three.js r160 (MIT) https://threejs.org */
 console.warn('Scripts "build/three.js" and "build/three.min.js" are deprecated with r150+, and will be removed with r160. Please use ES Modules or alternatives: https://threejs.org/docs/index.html#manual/en/introduction/Installation'),
@@ -178,7 +182,7 @@ function updWatch(){const t=$('wTep');t.textContent=Math.round(ST.tep);t.classNa
 let cur=null,curName='',scene=new THREE.Scene(),T=0,goLock=false;
 const SC={};
 function go(n,instant){if(goLock)return;goLock=true;const f=$('fade');f.style.opacity=instant?0:1;
-  setTimeout(()=>{hideSay();TQ.length=0;tT=0;tGap=0;$('toast').classList.remove('on');setBtns([]);bar(null);$('joy').style.display='none';joy.x=joy.y=0;
+  setTimeout(()=>{hideSay();TQ.length=0;tT=0;tGap=0;$('toast').classList.remove('on');$('pbub').style.display='none';setFov(55);setBtns([]);bar(null);$('joy').style.display='none';joy.x=joy.y=0;
     cur=SC[n];curName=n;cur.t=0;scene=cur.enter();$('scn').textContent=cur.title;f.style.opacity=0;goLock=false;window.dispatchEvent(new Event('scene'));},instant?0:380);}
 
 // pokoj (obývák) – sdílený pro začátek i konec
@@ -191,8 +195,8 @@ function livingRoom(s){
   const win=new THREE.Group();win.position.set(-3.7,1.65,-4.42);s.add(win);
   mesh(new THREE.PlaneGeometry(2.18,1.3),new THREE.MeshBasicMaterial({color:0x9fd6ff,transparent:true,opacity:0.28,depthWrite:false,side:THREE.DoubleSide}),1.1,0.65,0,win);
   box(0.05,1.3,0.05,'#fff',1.1,0.65,0,win);box(0.08,0.05,0.06,'#ccc',2.05,0.65,0.05,win);
-  const out=new THREE.Mesh(new THREE.PlaneGeometry(30,10),new THREE.MeshBasicMaterial({color:0x6f9cc8}));out.position.set(-2,3,-10);s.add(out);
-  box(30,0.1,6,'#777',-2,0.2,-7.5,s);box(3.5,2.2,0.2,'#c9b48a',-6,1.2,-9.3,s);box(4,3,0.2,'#d8c9a8',1,1.5,-9.3,s);cyl(0.05,0.05,3.2,'#333',-0.8,1.6,-7.2,s);sph(0.16,'#ffe9a0',-0.8,3.25,-7.2,s);
+  const out=new THREE.Mesh(new THREE.PlaneGeometry(160,80),new THREE.MeshBasicMaterial({color:0x6f9cc8}));out.position.set(-2,0,-34);s.add(out);
+  street(s);
   plaque('MŮJ GOLF ❤','#1f4e9a','#fff',1.3,0.5,s,0.2,2.75,-4.38);
   const couch=new THREE.Group();couch.position.set(0,0,-3);s.add(couch);
   box(2.8,0.25,0.95,'#5a2525',0,0.12,0,couch);couch.seat=box(2.6,0.24,0.9,'#8b3a3a',0,0.36,0.02,couch);
@@ -207,6 +211,32 @@ function livingRoom(s){
   cyl(0.25,0.2,0.5,'#c0603a',-4.3,0.25,-3.8,s);sph(0.5,'#3c8d3c',-4.3,0.95,-3.8,s);
   const spk=[-1.5,1.5].map(x=>{const g=speaker();g.position.set(x,0.68,0.05);g.visible=!!ST.basaky;tv.add(g);return g;});
   return {couch,table,scr,tv,dent,door,spk,win,out};}
+// ulice pod Dendovým oknem – obývák je ve 2. patře (podlaha 6,4 m nad ulicí)
+const GY=-6.4;
+function street(s){
+  // fasáda domu č. 10 zvenku (pod oknem, okolo a nad)
+  const F='#e8dcc0';box(16,6.4,0.12,F,-1,GY/2,-4.66,s);box(4,4.3,0.12,F,-7,2.15,-4.66,s);box(2,4.3,0.12,F,6,2.15,-4.66,s);box(16.4,0.5,0.4,'#cdbd9b',-1,4.35,-4.7,s);
+  box(2.5,0.08,0.3,'#bfb08f',-2.6,1.58,-4.75,s); // parapet
+  [-6.5,-2.6,1.6].forEach(x=>[-0.9,-4.1].forEach(y=>{if(x===1.6&&y<-3)return;box(2.0,1.3,0.06,'#6f8faa',x,y,-4.74,s);box(2.1,0.07,0.2,'#fff',x,y-0.68,-4.76,s);}));
+  [-6.5,1.6].forEach(x=>{box(2.0,1.3,0.06,'#6f8faa',x,2.3,-4.74,s);});
+  box(1.3,2.3,0.08,'#5a3a22',1.6,GY+1.15,-4.75,s);plaque('č. 10','#1f4e9a','#fff',0.6,0.3,s,1.6,GY+2.6,-4.8,Math.PI);
+  plaque('2. patro – DENDA','#ffcc00','#111',1.5,0.3,s,-2.6,1.25,-4.8,Math.PI);
+  // dům č. 12 vedle
+  box(7,13,0.4,'#c9a98a',-12.5,GY+6.5,-4.9,s);plaque('č. 12','#7a3020','#fff',0.7,0.34,s,-10.5,GY+2.6,-5.12,Math.PI);
+  for(let y=GY+1.6;y<5;y+=3.2)[-14,-11].forEach(x=>box(1.6,1.2,0.06,'#6f8faa',x,y,-5.12,s));
+  // chodník, silnice, protější domy
+  box(40,0.2,3.2,'#a7a7a7',-2,GY-0.1,-6.2,s);box(40,0.22,0.2,'#888',-2,GY-0.09,-7.8,s);box(40,0.1,6,'#3a3a3a',-2,GY-0.15,-10.9,s);
+  for(let x=-20;x<20;x+=3)box(1.4,0.02,0.15,'#eee',x,GY-0.09,-10.9,s);box(40,0.2,3,'#a7a7a7',-2,GY-0.1,-15.4,s);
+  [[-12,'#d8c9a8',13],[-2,'#e0b98f',15],[9,'#bcc7d0',12]].forEach(([x,c,h])=>{box(9.6,h,0.5,c,x,GY+h/2,-17.2,s);for(let y=GY+1.8;y<GY+h-1;y+=3.2)for(let k=-3;k<=3;k+=3)box(1.5,1.2,0.06,'#5f7f9a',x+k,y,-16.93,s);});
+  // zastávka + lampa
+  const bs=new THREE.Group();bs.position.set(4.2,GY,-7.0);s.add(bs);[-1.1,1.1].forEach(x=>cyl(0.05,0.05,2.3,'#555',x,1.15,0,bs));box(2.6,0.1,1.1,'#557',0,2.32,-0.2,bs);
+  box(2.2,1.2,0.04,'#9fd6ff',0,1.3,-0.7,bs);box(1.6,0.12,0.4,'#7a4a2a',0,0.5,-0.4,bs);plaque('🚌 ZASTÁVKA','#1565c0','#fff',1.2,0.3,bs,0,2.6,0.1);
+  cyl(0.06,0.06,4.2,'#333',-0.2,GY+2.1,-7.4,s);sph(0.2,'#ffe9a0',-0.2,GY+4.25,-7.4,s);
+  // Golf zaparkovaný dole + popelnice
+  CAR.position.set(-8.5,GY,-9.0);const sl=new THREE.DirectionalLight(0xfff2dd,1.5);sl.position.set(6,10,-30);s.add(sl);CAR.rotation.set(0,Math.PI/2,0);s.add(CAR);
+  cyl(0.32,0.3,0.9,'#2e7d32',-6.0,GY+0.45,-5.0,s);cyl(0.32,0.3,0.9,'#1565c0',-5.2,GY+0.45,-5.0,s);
+}
+
 // basák = velký basový repro
 function speaker(){const g=new THREE.Group();box(0.78,1.36,0.62,'#141414',0,0,0,g);box(0.8,0.06,0.64,'#333',0,0.68,0,g);
   const c=new THREE.Group();c.position.set(0,-0.22,0.31);g.add(c);const w=cyl(0.3,0.3,0.05,'#2b2b2b',0,0,0,c,20);w.rotation.x=Math.PI/2;const w2=cyl(0.2,0.24,0.06,'#444',0,0,0.02,c,20);w2.rotation.x=Math.PI/2;const w3=sph(0.08,'#666',0,0,0.04,c);w3.scale.z=0.5;
@@ -232,33 +262,38 @@ function makeDisco(s,room,D){const X={on:false,beat:-1,pump:0,lt:[]};
   if(ST.basaky)X.start();return X;}
 
 // parta pod okny (obecní hlučná parta ze sousedství – čistě hlasití sousedi)
-const PARTY_SHOUT=['JÉÉÉ! 🎉','HALÓ DENDO!','🎵 UNC UNC UNC 🎵','Pojď ven, Dendo!','Ještě jedno, ještě jedno!','ÓLÉ ÓLÉ ÓLÉ!','Dendóóó, hoď sem burgr!','Pusť to nahlas!'];
+const PARTY_SHOUT=['Dendo, hoď to sem z druhýho patra!','Dendóóó, slez dolů! Aha, ty nemůžeš… 😂','Hej, 2. patro! Pojď do okna!','JÉÉÉ! 🎉','HALÓ DENDO!','🎵 UNC UNC UNC 🎵','Pojď ven, Dendo!','Ještě jedno, ještě jedno!','ÓLÉ ÓLÉ ÓLÉ!','Dendóóó, hoď sem burgr!','Pusť to nahlas!'];
 const PARTY_DISCO=['Ty máš co říkat, Dendo! Tvoje basáky slyšíme až na zastávce!','Ztlum toho Kusáče a pak ztlumíme my!','Dendo, pusť nás na tu diskotéku!'];
 const YELL=['BUĎTE TICHO!','DRŽTE HUBY!','TICHO TAM DOLE!','JE NEMOCENSKÁ, VOLE!','DÁVAJ SERIÁL!','ZAVOLÁM NA VÁS FUDORU!'];
 const YELL_SAY={'BUĎTE TICHO!':'Buďte ticho! Tady se maroduje!','DRŽTE HUBY!':'Držte huby! Mám zlomenou… teda skoro zlomenou nohu!','TICHO TAM DOLE!':'Ticho tam dole! Gauč potřebuje klid!','JE NEMOCENSKÁ, VOLE!':'Je nemocenská! Den 731! Mám nárok na klid!','DÁVAJ SERIÁL!':'Ticho, dávaj seriál a já nic neslyším!','ZAVOLÁM NA VÁS FUDORU!':'Ještě slovo a zavolám na vás kurýra Fudory! Ten vás přejede kolem!'};
-const PARTY_BACK=['Jo jo, dobře, šéfe… 🤫','Psst, Denda se vzbudil!','Promiň, Dendo, už budem potichu. Asi.','No jo, no jo… ty jsi ale bručoun!'];
-function makeParty(s,room){const X={on:false,t:R(7,10),grp:new THREE.Group(),ppl:[],beat:-1,shT:0,yT:0};s.add(X.grp);X.grp.visible=false;
-  const cols=['#2e7d32','#f57c00','#6a1b9a','#00838f'];[-4.1,-3.35,-2.65,-2.0].forEach((x,i)=>{const P=person({shirt:cols[i],pants:'#333',skin:'#f1c27d',hair:['#3b2a1a','#111','#a0522d','#555'][i]});P.g.position.set(x,0.3,-5.6-(i%2)*0.35);P.g.rotation.y=0.15;X.grp.add(P.g);P.ph=R(0,6);X.ppl.push(P);
+const PARTY_BACK=['Jo jo, dobře, šéfe z druhýho patra… 🤫','Psst, Denda se vzbudil!','Promiň, Dendo, už budem potichu. Asi.','No jo, no jo… ty jsi ale bručoun!'];
+function makeParty(s,room){const X={on:false,t:R(7,10),grp:new THREE.Group(),ppl:[],beat:-1,shT:0,yT:0,txt:'',hold:0};s.add(X.grp);X.grp.visible=false;
+  const cols=['#2e7d32','#f57c00','#6a1b9a','#00838f'];[[-3.7,-6.5],[-2.9,-7.0],[-2.1,-6.4],[-1.3,-6.9]].forEach(([x,z],i)=>{const P=person({shirt:cols[i],pants:'#333',skin:'#f1c27d',hair:['#3b2a1a','#111','#a0522d','#555'][i]});P.g.position.set(x,GY,z);X.grp.add(P.g);P.ph=R(0,6);X.ppl.push(P);
     if(i===1){const bb=box(0.5,0.28,0.18,'#222',0,-0.6,0.12,P.aR);sph(0.08,'#777',-0.12,0,0.1,bb);sph(0.08,'#777',0.12,0,0.1,bb);}
     if(i===2)cyl(0.04,0.05,0.25,'#2e7d32',0,-0.62,0.05,P.aL);});
-  X.lab=label('Parta z čísla 12','#333','#fff',1.6);X.lab.position.set(-2.7,3.92,-4.9);X.grp.add(X.lab);
-  X.bub=new THREE.Sprite(new THREE.SpriteMaterial({map:texLabel('…','#fff','#111'),depthTest:false}));X.bub.scale.set(3.0,0.75,1);X.bub.renderOrder=10;X.bub.position.set(-2.7,3.35,-4.9);X.grp.add(X.bub);
-  X.bubble=t=>{const W=1024,H=256,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.fillStyle='#fff';x.strokeStyle='#111';x.lineWidth=8;
-    x.beginPath();x.roundRect(6,6,W-12,H-60,40);x.moveTo(W/2-40,H-56);x.lineTo(W/2,H-6);x.lineTo(W/2+40,H-56);x.fill();x.stroke();x.fillStyle='#fff';x.fillRect(W/2-36,H-62,72,10);
-    x.fillStyle='#111';x.textAlign='center';x.textBaseline='middle';let fs=74;const words=t.split(' ');let lines;
-    do{x.font='900 '+fs+'px Segoe UI, Arial, sans-serif';lines=[];let ln='';for(const w of words){const tt=ln?ln+' '+w:w;if(x.measureText(tt).width>W-80&&ln){lines.push(ln);ln=w;}else ln=tt;}lines.push(ln);fs-=4;}while(fs>20&&(lines.length>2||lines.some(l=>x.measureText(l).width>W-80)));
-    const lh=fs*1.15;lines.forEach((l,i)=>x.fillText(l,W/2,(H-54)/2+(i-(lines.length-1)/2)*lh));
-    const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;X.bub.material.map.dispose();X.bub.material.map=tx;X.bub.material.needsUpdate=true;};
-  X.update=(dt,G)=>{X.t-=dt;
-    if(!X.on&&X.t<=0){X.on=true;X.grp.visible=true;X.shT=0;X.bubble('🎵 UNC UNC UNC 🎵');G.partyOn();}
-    else if(X.on&&X.t<=-40){X.t=-20;}
-    // okno se zavírá samo
+  X.lab=label('Parta z čísla 12','#333','#fff',1.8);X.lab.material.depthTest=true;X.lab.userData.street=true;X.lab.position.set(-2.5,GY+2.55,-6.7);X.grp.add(X.lab);
+  // Denda vyklonený z okna (jen pro pohled zvenku)
+  const DL=makeDenda();DL.g.position.set(-2.6,1.15,-3.9);DL.g.rotation.y=Math.PI;DL.s.rotation.x=0.95;DL.head.rotation.x=0.55;DL.lab.visible=false;DL.g.visible=false;s.add(DL.g);X.DL=DL;
+  X.bubble=t=>{X.txt=t;$('pbub').innerHTML='<small>📢 Parta z čísla 12 <i>(dole na ulici)</i>:</small><br>'+t;};
+  const v=new THREE.Vector3();
+  X.place=(G)=>{const e=$('pbub');const show=(X.on||X.hold>0)&&curName==='gauc'&&!goLock;if(!show){e.style.display='none';return;}
+    const outV=G.viewT>0;if(outV)v.set(-2.5,GY+2.4,-6.7);else v.set(-2.6,3.05,-4.4);v.project(cam);
+    let x=(v.x+1)/2*innerWidth,y=(1-v.y)/2*innerHeight;if(v.z>1){x=innerWidth*0.3;y=innerHeight*0.3;}
+    const w=e.offsetWidth||200;x=clamp(x,w/2+8,innerWidth-w/2-8);y=clamp(y,(e.offsetHeight||60)+70,innerHeight-220);
+    e.style.left=x+'px';e.style.top=y+'px';e.className=outV?'big':'';e.style.display='block';};
+  X.update=(dt,G)=>{X.t-=dt;if(X.hold>0)X.hold-=dt;
+    if(!X.on&&X.t<=0){X.on=true;X.grp.visible=true;X.shT=2.5;X.bubble('🎵 UNC UNC UNC 🎵 HALÓÓÓ DENDO!');G.partyOn();}
     room.win.rotation.y+=((X.yT>0?-1.25:0)-room.win.rotation.y)*Math.min(1,dt*5);if(X.yT>0)X.yT-=dt;
-    X.ppl.forEach((P,i)=>{if(X.on){P.ph+=dt*9;P.g.position.y=0.3+Math.abs(Math.sin(P.ph))*0.12;P.aL.rotation.x=-2.6+Math.sin(P.ph)*0.5;P.aR.rotation.x=i===1?-1.4:-2.6-Math.sin(P.ph)*0.5;P.head.rotation.z=Math.sin(P.ph*0.5)*0.2;}
-      else{P.g.position.y=0.3;P.aL.rotation.x=P.aR.rotation.x=0;P.head.rotation.x=0.35;P.head.rotation.z=0;}});
+    DL.g.visible=X.yT>0.3&&G.viewT>0;if(DL.g.visible){DL.aR.rotation.x=-2.6+Math.sin(T*14)*0.5;DL.aL.rotation.x=-1.2;DL.head.rotation.z=Math.sin(T*9)*0.1;}
+    const lookUp=!X.on||X.yT>0;
+    X.ppl.forEach((P,i)=>{const ty=lookUp?Math.atan2(-2.6-P.g.position.x,-4.6-P.g.position.z)*0.6+Math.PI*0.4:Math.PI*0.88+Math.sin(T*2+i)*0.3;
+      let d=ty-P.g.rotation.y;P.g.rotation.y+=d*Math.min(1,dt*6);
+      if(X.on){P.ph+=dt*9;P.g.position.y=GY+Math.abs(Math.sin(P.ph))*0.15;P.aL.rotation.x=-2.6+Math.sin(P.ph)*0.5;P.aR.rotation.x=i===1?-1.4:-2.6-Math.sin(P.ph)*0.5;P.head.rotation.x=-0.25;P.head.rotation.z=Math.sin(P.ph*0.5)*0.2;}
+      else{P.g.position.y=GY;P.aL.rotation.x=P.aR.rotation.x=i===0?-0.6:0;P.head.rotation.x=-0.75;P.head.rotation.z=0;}});
+    X.place(G);
     if(!X.on)return;const b=Math.floor(T*2.6);if(b!==X.beat){X.beat=b;tone([196,233,262,294][b%4],0.12,'square',0.05);if(b%2)noise(0.03,0.06);}
-    X.shT-=dt;if(X.shT<=0){X.shT=R(2.2,3.4);X.bubble((G.disco&&G.disco.on&&Math.random()<0.45)?pick(PARTY_DISCO):pick(PARTY_SHOUT));}};
-  X.hush=()=>{X.on=false;X.t=R(18,26);X.yT=2.2;X.bubble(pick(PARTY_BACK));setTimeout(()=>{if(!X.on)X.grp.visible=false;},3500);};
+    X.shT-=dt;if(X.shT<=0){X.shT=R(2.4,3.4);X.bubble((G.disco&&G.disco.on&&Math.random()<0.4)?pick(PARTY_DISCO):pick(PARTY_SHOUT));}};
+  X.hush=()=>{X.on=false;X.t=R(18,26);X.yT=3.2;X.hold=3.6;X.bubble(pick(PARTY_BACK));setTimeout(()=>{if(!X.on)X.grp.visible=false;},4200);};
   return X;}
 
 const TV_JOKES=['📺 <b>ČT Sport:</b> Cvičení pro seniory. <b>Denda:</b> Moc náročný, přepnout.','📺 <b>Dokument:</b> Lenochod tříprstý. <b>Denda:</b> Konečně někdo, kdo mě chápe.',
@@ -271,7 +306,7 @@ const BRANDS=[{n:'Fudora',shirt:'#e6007e',bg:'#e6007e',fg:'#fff'},{n:'McDenda',s
 
 SC.gauc={title:'🛋️ Den 731 nemocenské – obývák',enter(){
   const s=newScene('#2a2320');const room=livingRoom(s);this.room=room;
-  const D=makeDenda();D.sit();D.g.position.set(0,-0.36,-2.95);room.couch.parent.add(D.g);this.D=D;this.disco=makeDisco(s,room,D);this.party=makeParty(s,room);this.visited=!!ST.basaky;this.wait=0;this.K=null;this.back=null;this.ph2='';
+  const D=makeDenda();D.sit();D.g.position.set(0,-0.36,-2.95);room.couch.parent.add(D.g);this.D=D;this.disco=makeDisco(s,room,D);this.viewT=0;this.party=makeParty(s,room);this.visited=!!ST.basaky;this.wait=0;this.K=null;this.back=null;this.ph2='';
   this.cour=null;this.next=2.2;this.ci=0;this.idle=5;this.state='sit';this.st=0;this.tvT=0;this.pile=0;this.chan=0;
   this.held=burger();this.held.visible=false;s.add(this.held);
   aim(2.6,2.6,3.4,0.2,0.9,-2.4);
@@ -307,16 +342,17 @@ SC.gauc={title:'🛋️ Den 731 nemocenské – obývák',enter(){
   setBtns([{t:'🔊 Basy! <small>(B)</small>',k:['KeyB'],f:()=>this.moreBass(),c:'blue',id:'bBass'}]);
   say('<b>Kusáč:</b> Čau Dendo! Kusáč expres 🚚 – vozím chlazený zboží, dřív taxíkem lidi a dneska… BASÁKY! 🔊',4500);
   const T2=(ms,f)=>setTimeout(()=>{if(curName==='gauc'&&this.state==='visit')f();},ms);
-  T2(4700,()=>say('<b>Denda:</b> Kusáči, ty seš blázen! Jak jsi to sem dostal? <b>Kusáč:</b> Deset let v taxíku, Dendo. Naložím cokoliv. I tebe, kdybys vstal. 😄',5200));},
+  T2(4700,()=>say('<b>Denda:</b> Kusáči, ty seš blázen! Jak jsi to sem dostal? <b>Kusáč:</b> Deset let v taxíku, Dendo. Naložím cokoliv – a vynesu to i do druhýho patra. I tebe, kdybys vstal. 😄',5200));},
  place(){this.ph2='disco';this.vt=0;const K=this.K;K.car.forEach(g=>K.s.remove(g));K.aL.rotation.z=K.aR.rotation.z=0;this.disco.start();SND.goal();burst('DISKOTÉKA! 🪩',1500);
   say('<b>Kusáč:</b> Tak, hezky vedle telky. Pouštím ti DISKOTÉKU, ať se ti hejbe aspoň bříško! 🕺',4200);
   const T2=(ms,f)=>setTimeout(()=>{if(curName==='gauc'&&this.state==='visit')f();},ms);
   T2(1500,()=>toast('⌚ Hluk 116 dB. Tep jde do rytmu: 120 BPM 🎶'));
   T2(4400,()=>say('<b>Kusáč:</b> Cítíš ten bas? To je jedinej kardio, co ti doktor povolí! <b>Denda:</b> Konečně tanec, u kterýho nemusím vstávat! 🥳',4800));},
- partyOn(){const b=$('bOkno');if(b){b.classList.remove('off');b.classList.add('pulse');}if(this.state==='sit')say(ST.okno?'<b>Denda:</b> Zase?! Parta z čísla 12 je zpátky… 😤':'<b>Parta pod okny:</b> HALÓÓÓ! 🎵 UNC UNC UNC 🎵 <b>Denda:</b> Co to je za randál?!',3200);
+ lookOut(t){this.viewT=t;aimOut();},
+ partyOn(){this.party.shown=false;const b=$('bOkno');if(b){b.classList.remove('off');b.classList.add('pulse');}if(this.state==='sit')say(ST.okno?'<b>Denda:</b> Zase?! Parta z čísla 12 je zpátky… 😤':'<b>Parta pod okny:</b> HALÓÓÓ! 🎵 UNC UNC UNC 🎵 <b>Denda:</b> Co to je za randál?!',3200);
   toast(ST.okno?'⌚ Hluk pod okny opět 92 dB. Otevři okno a zařvi! 🪟':'⌚ Hluk pod okny 92 dB. Doporučení: otevřít okno (bez vstávání!) a zařvat 🪟');},
  yell(){const X=this.party;if(this.state!=='sit'||!X||!X.on)return;ST.okno++;const y=pick(YELL);burst(y,1300);shakeT=0.25;tone(180,0.5,'sawtooth',0.18,90);
-  say('<b>Denda:</b> *otevře okno násadou od mopu, ani se nezvedne* '+YELL_SAY[y]+' 😡',3200);X.hush();const b=$('bOkno');if(b){b.classList.remove('pulse');b.classList.add('off');}
+  say('<b>Denda:</b> *vykloní se z okna ve 2. patře (opatrně, vsedě!)* '+YELL_SAY[y]+' 😡',3400);X.hush();this.lookOut(3.6);const b=$('bOkno');if(b){b.classList.remove('pulse');b.classList.add('off');}
   if(ST.okno===1)setTimeout(()=>toast('⌚ Zařval jsi z okna: tep '+Math.round(ST.tep+25)+' BPM. Tohle se počítá jako cvičení! 💪'),900);ST.tep=Math.min(150,ST.tep+25);},
  tv(){if(this.state!=='sit')return;this.chan++;ST.kanaly++;SND.beep();say(TV_JOKES[this.chan%TV_JOKES.length],3800);this.room.scr.material.color.setHSL(Math.random(),0.7,0.55);},
  spawn(){const b=BRANDS[this.ci++%BRANDS.length];const P=person({shirt:b.shirt,pants:'#222',skin:pick(['#f1c27d','#e0ac69','#8d5524','#ffdbac'])});
@@ -338,6 +374,8 @@ SC.gauc={title:'🛋️ Den 731 nemocenské – obývák',enter(){
   say('<b>Denda:</b> Tak jo… jdu na záchod. Hrdinsky. 💪',2000);toast('⌚ Detekován pohyb! Je to zemětřesení?');ST.tep=110;},
  update(dt){const D=this.D;
   if(!this.disco.on){this.tvT+=dt;if(this.tvT>1.3){this.tvT=0;this.room.scr.material.color.setHSL(Math.random(),0.6,0.5);}}
+  if(this.viewT>0){this.viewT-=dt;outLabels(true);if(this.viewT<=0||this.state!=='sit'){this.viewT=0;setFov(55);outLabels(false);aim(2.6,2.6,3.4,0.2,0.9,-2.4);}}
+  if(this.party.on&&(!this.party.shown||T-this.party.lastV>16)&&this.state==='sit'&&!this.K&&this.viewT<=0){this.party.shown=true;this.party.lastV=T;this.lookOut(3.6);toast('⌚ Pohled z okna: parta z čísla 12 řve dole na ulici ⬇');}
   this.disco.update(dt);this.party.update(dt,this);this.wait+=dt;
   if(this.state==='sit'&&!this.visited&&!this.cour&&!(this.eatT>0)&&(ST.burgery>=2||this.wait>28))this.bell();
   if(this.state==='bell'||this.state==='crawl'){if(this.wait>6){this.wait=0;SND.dingdong();say(pick(['<b>Hlas za dveřmi:</b> Haló! Vím, že tam seš, slyším ten gauč vrzat!','🔔 <i>CRRR! CRRR!</i>']),2500);}}
@@ -383,9 +421,13 @@ SC.gauc={title:'🛋️ Den 731 nemocenské – obývák',enter(){
 SC.sanitka={title:'🚑 Záchranka už zase jede k Dendovi',enter(){
   const s=newScene('#87c5f0');box(80,0.1,60,'#5fa84a',0,-0.05,0,s);box(80,0.02,4,'#444',0,0.01,1,s);
   for(let x=-36;x<40;x+=4)box(1.8,0.02,0.15,'#fff',x,0.03,1,s);
-  const h=new THREE.Group();h.position.set(0,0,-6);s.add(h);box(7,3.2,5,'#f2e6c9',0,1.6,0,h);const roof=mesh(new THREE.ConeGeometry(5.3,2.2,4),'#a03b2c',0,4.3,0,h);roof.rotation.y=Math.PI/4;roof.scale.set(1.05,1,0.75);
-  box(1.1,2.1,0.06,'#7a4a2a',0,1.05,2.52,h);box(1.4,1,0.06,'#9fd6ff',-2.3,1.9,2.52,h);box(1.4,1,0.06,'#9fd6ff',2.3,1.9,2.52,h);
-  plaque('Tady bydlí DENDA','#fff','#333',2.4,0.45,h,0,2.75,2.55);
+  const h=new THREE.Group();h.position.set(0,0,-6);s.add(h);box(8,9.6,5,'#e8dcc0',0,4.8,0,h);box(8.4,0.5,5.4,'#cdbd9b',0,9.85,0,h);
+  box(1.1,2.1,0.06,'#5a3a22',0,1.05,2.52,h);plaque('č. 10','#1f4e9a','#fff',0.6,0.3,h,0,2.45,2.56);
+  [0,1,2].forEach(f=>[-2.6,2.6].forEach(x=>{if(f===0&&x===0)return;const y=1.9+f*3.2;box(1.5,1.1,0.06,'#6f8faa',x,y,2.52,h);box(1.6,0.07,0.18,'#fff',x,y-0.58,2.56,h);}));
+  [1,2].forEach(f=>box(1.3,1.1,0.06,'#6f8faa',0,1.9+f*3.2,2.52,h));
+  this.dw=mesh(new THREE.BoxGeometry(1.5,1.1,0.07),new THREE.MeshBasicMaterial({color:0xffe066}),-2.6,8.3,2.53,h);
+  plaque('⬇ DENDA – 2. patro','#ffcc00','#111',2.2,0.42,h,-2.6,9.25,2.58);
+  box(9,0.06,0.4,'#bbb',0,3.2,2.6,h);box(9,0.06,0.4,'#bbb',0,6.4,2.6,h);
   CAR.position.set(5.5,0,-2.6);CAR.rotation.y=Math.PI/2;s.add(CAR);tree(s,-6,-3,1.2);tree(s,8.5,-5,1);tree(s,-9,-8,1.4);
   const A=new THREE.Group();s.add(A);box(3.4,1.8,1.7,'#fafafa',0,1.25,0,A);box(1.1,1.2,1.65,'#fafafa',2.2,0.95,0,A);box(0.06,0.6,1.4,'#2a3a50',2.76,1.25,0,A);
   box(3.42,0.22,1.72,'#e53935',0,1.0,0,A);box(1.12,0.22,1.67,'#e53935',2.2,1.0,0,A);
@@ -393,12 +435,12 @@ SC.sanitka={title:'🚑 Záchranka už zase jede k Dendovi',enter(){
   [[-1.1],[1.1],[2.2]].forEach(([x])=>{[-0.86,0.86].forEach(z=>{const w=cyl(0.35,0.35,0.24,'#151515',x,0.35,z,A);w.rotation.x=Math.PI/2;});});
   this.l1=mesh(new THREE.BoxGeometry(0.35,0.2,0.4),new THREE.MeshBasicMaterial({color:0x2060ff}),1.2,2.25,-0.4,A);this.l2=mesh(new THREE.BoxGeometry(0.35,0.2,0.4),new THREE.MeshBasicMaterial({color:0x2060ff}),1.2,2.25,0.4,A);
   A.position.set(-22,0,1);this.A=A;this.done=0;
-  aim(7,3.6,9,0,1.2,-1.5);
+  aim(8,5.2,11,0,3.6,-2);
   setBtns([{t:'Dál ➡️ <small>(Enter)</small>',k:['Enter','Space'],f:()=>go('spital'),c:'blue'}]);
-  setTimeout(()=>{if(curName==='sanitka')say('<b>Záchranář:</b> Zase vy, pane Dendo? Co to bylo tentokrát – gauč, nebo lednička?',4500);},1800);
+  setTimeout(()=>{if(curName==='sanitka')say('<b>Záchranář:</b> Zase vy, pane Dendo? A zase nosítka do druhýho patra… Co to bylo tentokrát – gauč, nebo lednička?',4500);},1800);
   return s;},
  update(dt){this.t+=dt;const k=Math.min(1,this.t/3.2),e=1-Math.pow(1-k,3);this.A.position.x=-22+21*e;
-  const on=Math.floor(this.t*6)%2;this.l1.material.color.set(on?0x2060ff:0xffffff);this.l2.material.color.set(on?0xffffff:0x2060ff);ST.tep+=(140-ST.tep)*dt;
+  const on=Math.floor(this.t*6)%2;this.dw.material.color.set(Math.floor(this.t*2)%2?0xffe066:0xff9a3c);this.l1.material.color.set(on?0x2060ff:0xffffff);this.l2.material.color.set(on?0xffffff:0x2060ff);ST.tep+=(140-ST.tep)*dt;
   if(this.t>3.4&&!this.done){this.done=1;toast('⌚ Doporučená aktivita: <b>nosítka</b>. Kroky: 0. 👍');}
   if(this.t>8.5&&this.done===1){this.done=2;go('spital');}}};
 
@@ -579,6 +621,9 @@ SC.rano={title:'🌅 Ráno, 6:30 – den 731',enter(){
   if(this.ph==='out'&&walk(1.9)){A.g.visible=false;this.ph='end';this.pt=0;toast('⌚ Anetka odešla do práce. Ty máš směnu na gauči. 🛋️');}
   if(this.ph==='end'){this.pt+=dt;if(this.pt>1.6)this.finish();}}};
 
+function setFov(f){if(cam.fov!==f){cam.fov=f;cam.updateProjectionMatrix();}}
+function outLabels(out){scene.traverse(o=>{if(o.isSprite&&!o.userData.street)o.visible=!out;});}
+function aimOut(){setFov(cam.aspect<1?72:55);outLabels(true);cam.position.set(10,-1.5,-16.4);cam.userData.look=(cam.userData.look||new THREE.Vector3()).set(-2.5,-3.5,-6.0);}
 function rating(){if(ST.goly>=3&&ST.skrabance<=3)return '🏆 Gaučový Ronaldo';if(ST.goly>=3)return '⚽ Kanonýr se sádrou';if(ST.burgery>=8)return '🍔 Zákazník měsíce Fudory';if(ST.skrabance>=8)return '🚗 Nejoblíbenější klient autolakovny';return '🛋️ Profesionální gaučář';}
 SC.konec={title:'🏆 Konec dne – zase na gauči',enter(){
   const s=newScene('#2a2320');const room=livingRoom(s);

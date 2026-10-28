@@ -13,7 +13,13 @@ with sync_playwright() as p:
     pg.goto('file://'+D+'/index.html');pg.wait_for_timeout(1500)
     sh=lambda n:pg.screenshot(path=f'{OUT}/{pre}{n}.png')
     sh('00-titulka')
-    pg.click('#play',force=True);pg.wait_for_function("G.scene==='gauc'");pg.wait_for_timeout(1500);sh('01-gauc-start')
+    pg.click('#play',force=True);pg.wait_for_function("G.scene==='rano'");pg.wait_for_timeout(1200);sh('anetka-01-rano')
+    pg.wait_for_function("G.cur.ph==='talk'",timeout=15000);pg.wait_for_timeout(800);sh('anetka-02-prichod')
+    pg.wait_for_function("G.cur.ph==='duvet'",timeout=15000);pg.wait_for_timeout(1300);sh('anetka-03-perina')
+    pg.wait_for_function("G.cur.ph==='black'",timeout=15000);pg.wait_for_timeout(900);sh('anetka-04-chvilicka')
+    pg.wait_for_function("G.cur.ph==='kiss'",timeout=15000);pg.wait_for_timeout(900);sh('anetka-05-pa-zlato')
+    pg.wait_for_function("G.scene==='gauc'",timeout=20000);pg.wait_for_timeout(1500);sh('01-gauc-start')
+    print('po rane',pg.evaluate("JSON.stringify(G.ST)"))
     # sníst 5 burgerů
     def eat(n,first=None):
         for i in range(n):
@@ -39,6 +45,17 @@ with sync_playwright() as p:
     pg.wait_for_timeout(2600);sh('kusac-05-diskoteka-tanec')
     pg.wait_for_function("G.cur.state==='sit'&&G.cur.visited",timeout=30000);pg.wait_for_timeout(800);sh('kusac-06-po-navsteve')
     print('po kusacovi',pg.evaluate("JSON.stringify(G.ST)"))
+    # --- parta pod okny: 2x zařvat ---
+    for k in range(2):
+        pg.wait_for_function("G.cur.party.on&&G.cur.state==='sit'&&!document.querySelector('#bOkno').classList.contains('off')",timeout=40000);pg.wait_for_timeout(2500)
+        if k==0: sh('okno-01-parta')
+        if mob: pg.tap('#bOkno',force=True)
+        else: pg.keyboard.press('KeyO')
+        pg.wait_for_timeout(500)
+        if k==0: sh('okno-02-zarval')
+        pg.wait_for_timeout(2000)
+        if k==0: sh('okno-03-ticho')
+    print('po okne',pg.evaluate("JSON.stringify(G.ST)"))
     eat(3)
     pg.keyboard.press('KeyT');pg.wait_for_timeout(500)
     sh('03-gauc-tlusty')
@@ -71,7 +88,7 @@ with sync_playwright() as p:
         pg.wait_for_timeout(150)
     pg.wait_for_function("G.scene==='konec'",timeout=90000);pg.wait_for_timeout(2500);sh('15-konec-statistiky')
     print('konec',pg.evaluate("JSON.stringify(G.ST)"))
-    pg.click('#again',force=True);pg.wait_for_function("G.scene==='gauc'");pg.wait_for_timeout(1200);sh('16-znovu')
+    pg.click('#again',force=True);pg.wait_for_function("G.scene==='rano'");pg.wait_for_timeout(1200);sh('16-znovu')
     print('znovu',pg.evaluate("JSON.stringify(G.ST)"))
     br.close()
 print('ERRORS:',json.dumps(ERR,ensure_ascii=False,indent=1))
